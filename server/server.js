@@ -8,17 +8,32 @@ dotenv.config();
 
 const app = express();
 
+// middleware
 app.use(cors());
 app.use(express.json());
 
+// routes
 app.use('/api', dayRoutes);
 
 app.get('/', (_req, res) => {
   res.send({ status: 'Finance API is running' });
 });
 
-// CONNECT DB (important)
-await connectDB();
+// connect DB and start server
+const startServer = async () => {
+  try {
+    await connectDB();
 
-// EXPORT instead of listen
-export default app;
+    const PORT = process.env.PORT || 5000;
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error('Server failed to start:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
