@@ -7,24 +7,29 @@ import dayRoutes from './routes/day.js';
 dotenv.config();
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
+// Routes
 app.use('/api', dayRoutes);
 
 app.get('/', (_req, res) => {
   res.send({ status: 'Finance API is running' });
 });
 
-const PORT = process.env.PORT || 5000;
+// ✅ Connect DB (NO app.listen)
+let isConnected = false;
 
-connectDB()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server listening on port ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error('Database connection failed:', error);
-    process.exit(1);
-  });
+async function connect() {
+  if (!isConnected) {
+    await connectDB();
+    isConnected = true;
+  }
+}
+
+// ✅ Export handler for Vercel
+export default async function handler(req, res) {
+  await connect();
+  return app(req, res);
+}
