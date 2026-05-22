@@ -10,6 +10,7 @@ import Spinner from '../components/Spinner';
 const formatRupee = (value) => {
   return `₹${Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
+
 const DayPage = ({ fetchDays }) => {
   const { date } = useParams();
   const navigate = useNavigate();
